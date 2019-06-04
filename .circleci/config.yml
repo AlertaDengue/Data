@@ -1,56 +1,32 @@
-version: 2
-jobs:
-  build:
-    working_directory: ~/circleci-demo-ruby-rails
-    
-    # Primary container image where all commands run
-    
-    docker:
-      - image: circleci/ruby:2.4.1-node
-        environment:
-          RAILS_ENV: test
-          PGHOST: 127.0.0.1
-          PGUSER: root
-    
-    # Service container image available at `host: localhost`
-    
-      - image: circleci/postgres:9.6.2-alpine
-        environment:
-          POSTGRES_USER: root
-          POSTGRES_DB: circle-test_test
-        
-    steps:
-      - checkout
+version: 2 # use CircleCI 2.0
+jobs: # a collection of steps
+  build: # runs not using Workflows must have a `build` job as entry point
 
-      # Restore bundle cache
-      - restore_cache:
-          keys:
-            - rails-demo-{{ checksum "Gemfile.lock" }}
-            - rails-demo-
+    working_directory: ~/circleci-test # directory where steps will run
 
-      # Bundle install dependencies
-      - run:
-          name: Install dependencies
-          command: bundle check --path=vendor/bundle || bundle install --path=vendor/bundle --jobs 4 --retry 3
+    docker: # run the steps with Docker
+      - image: circleci/openjdk:8-jdk # ...with this image as the primary container; this is where all `steps` will run
 
-      - run: sudo apt install -y postgresql-client || true
 
-      # Store bundle cache
-      - save_cache:
-          key: rails-demo-{{ checksum "Gemfile.lock" }}
+steps: # a collection of executable commands
+
+      - checkout # check out source code to working directory
+
+      - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
+          key: circleci-test-{{ checksum "pom.xml" }}
+
+      - run: mvn dependency:go-offline # gets the project dependencies
+
+      - save_cache: # saves the project dependencies
           paths:
-            - vendor/bundle
+            - ~/.m2
+          key: circleci-test-{{ checksum "pom.xml" }}
 
-      - run:
-          name: Database Setup
-          command: |
-            bundle exec rake db:create
-            bundle exec rake db:structure:load
 
-      - run:
-          name: Parallel RSpec
-          command: bin/rails test
+- run: mvn package # run the actual tests
 
-      # Save artifacts
-      - store_test_results:
-          path: /tmp/test-results
+      - store_test_results: # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard.
+          path: target/surefire-reports
+
+      - store_artifacts: # store the uberjar as an artifact
+          path: target/circleci-test-0.0.1-SNAPSHOT.jar
