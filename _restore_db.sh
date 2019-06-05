@@ -8,4 +8,6 @@
 psql -d dengue < alertademo_data.sql
 
 #gzip -d infodengue.sql.gz
-#psql -d infodengue < patch\infodengue.sql
+#psql -d infodengue < infodengue.sql
+
+psql -d dengue < patch/notificacao.sql
