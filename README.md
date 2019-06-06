@@ -79,9 +79,7 @@ Access the "psql" and activate the users password change: "forecast" and "dengue
 ```sh
 psql
     \password forecast
-    dengueadmin
     \password dengueadmin
-    dengueadmin
 ```
 
 Exit "psql":
