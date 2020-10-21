@@ -1,8 +1,13 @@
+#!/bin/bash
+
 #############
 ## restore.sh
 #############
-#!/bin/bash
 
-./_prepare_server.sh
-./_create_db.sh
-./_restore_db.sh
+
+# Create and restore database
+./docker/postgres_setup/01-create_dengue_db.sh
+./docker/postgres_setup/01-create_infodengue_db.sh
+
+# Update tables
+./docker/postgres_setup/02-add_patch.sh
