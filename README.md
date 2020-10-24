@@ -1,89 +1,63 @@
-# Data: Data from the Infodengue project
+# Data for the Infodengue project
+<p>
 
-## Ubuntu Operating System
+### *The data inserted randomly in the database for testing and development with the AlertaDengue project.*
+https://github.com/AlertaDengue/AlertaDengue
 
-Install PostgreSQL 10 and PostGIS:
+<br/>
 
+## Configure the demo database on the local machine *(Linux Ubuntu)*
+
+### Install PostgreSQL 12 and PostGIS:
 ```sh
-apt install postgresql-10-postgis-2.4
+$ sudo apt update && sudo apt -y upgrade
+$ sudo apt install postgis postgresql-12-postgis-3
 ```
-
-## Configuring PostgreSQL
-
-Edit the file "pg_hba.conf”:
-
+### Configuring PostgreSQL:
+*Adjust PostgreSQL configuration so that remote connections to the database are possible.*
  ```sh
-nano /etc/postgresql/10/main/pg_hba.conf
+$ sudo echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.3/main/pg_hba.conf
 ```
-
-Insert the line at the end of the file: 
-
+*And add ``listen_addresses`` to ``/etc/postgresql/9.3/main/postgresql.conf``*
 ```sh
-host all all 0.0.0.0/0 md5
+$ sudo echo "listen_addresses='*'" >> /etc/postgresql/9.3/main/postgresql.conf
 ```
-
-Edit the file “postgresql.conf”: 
-
+*Restart the Postgres server.*
 ```sh
-nano /etc/postgresql/10/main/postgresql.conf
+$ sudo /etc/init.d/postgresql restart
 ```
-
-
-in the "connections and authentication" section: Connection Settings. 
-Remove "#" and replace "localhost" with "*" in line "#listen_address" localhost ":
-
+### Clone the repository to your local machine:
+*Install: "git lfs and clone repo."*
 ```sh
-listen_address “*”
+$ sudo apt install git git-lfs
+$ git lfs install
+$ git-lfs clone https://github.com/AlertaDengue/Data.git
 ```
-
-Restart the Postgres server:
-
+### Restore database:
+*Use the user postgres to configure and restore data.*
 ```sh
-/etc/init.d/postgresql restart
+$ su postgres
+$ cd Data
+$ ./restore.sh
 ```
+<br/>
 
-## Download the database
-
-Install: "git" and "git lfs":
-
+## Deploying Data with Docker
+####  Get Docker: 
+*https://docs.docker.com/get-docker/*
+### Install Docker Compose: 
+*https://docs.docker.com/compose/install/*
+### Clone the repository to your local machine:
+*Install: git lfs and clone repo.*
 ```sh
-apt install git git-lfs
-git lfs install
+$ sudo apt install git git-lfs
+$ git lfs install
+$ git clone https://github.com/AlertaDengue/Data.git
 ```
-
-Download the files:
-
+### Build and deploy data to infodengue:
+*Build and up the demo_db database.*
 ```sh
-git-lfs clone https://github.com/AlertaDengue/Data.git
-```
-
-## Restore database
-
-With the user postgres.
-
-```sh
-su postgres
-```
-
-Go to the location where you transferred the files and launch the "restore.sh" file to restore the database:
-
-```sh
-cd Data
-./restore.sh
-```
-
-## Configure the database
-
-Access the "psql" and activate the users password change: "forecast" and "dengueadmin" for "dengueadmin":
-
-```sh
-psql
-    \password forecast
-    \password dengueadmin
-```
-
-Exit "psql":
-
-```sh
-\q
+$ cd Data
+$ make build
+$ make deploy
 ```
