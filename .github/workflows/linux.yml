@@ -24,19 +24,20 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install PostgreSQL 12 and PostGIS
+    - name: Install Latest Docker
       run: |
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu  $(lsb_release -cs)  stable"
         sudo apt-get update
-        sudo apt-get install build-essential git make wget
-        sudo apt-get install postgresql-12 postgresql-12-postgis-3
-        sudo apt-get install ca-certificates locales --no-install-recommends --yes
+        sudo apt-get install docker-ce
 
-    - name: Configuring PostgreSQL
+    - name: Check docker and docker-compose versions
       run: |
-        sudo /etc/init.d/postgresql restart
+        docker-compose --version
+        docker --version
 
-    - name: Download and restore database from Dataverse
+    - name: Build and deploy data to infodengue
       run: |
-        pwd
-        su postgres
-        make create_demodb
+        make download_demodb
+        make build
+        make deploy
