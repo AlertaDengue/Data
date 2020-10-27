@@ -1,0 +1,42 @@
+ # This workflow will install Postgresql dependencies and run the database demo.
+
+
+name: CI
+
+on:
+  push:
+    branches: [ master]
+  pull_request:
+    branches: [ master]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+
+    env:
+      COMPOSE_FILE: docker/docker-compose.yml
+      PYTHON_VERSION: ${{ matrix.python-version }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install PostgreSQL 12 and PostGIS
+      run: |
+        sudo apt-get update
+        sudo apt-get install build-essential git make wget
+        sudo apt-get install postgresql-12 postgresql-12-postgis-3
+        sudo apt-get install ca-certificates locales --no-install-recommends --yes
+
+    - name: Configuring PostgreSQL
+      run: |
+        sudo /etc/init.d/postgresql restart
+
+    - name: Download and restore database from Dataverse
+      run: |
+        pwd
+        su postgres
+        make create_demodb
