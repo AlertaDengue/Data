@@ -14,10 +14,15 @@ DOCKER_RUN := $(DOCKER) run --rm
 DOCKER_BUILD := $(DOCKER) build
 DOCKER_STOP := $(DOCKER) rm --force --stop
 DOCKER_EXEC := $(DOCKER) exec
+SERVICES := demo_db
 
+
+# Create roles
+download_demodb:
+	bash _download_db.sh
 
 # Create a local database and execute the patches
-configure_db:
+create_demodb:
 	bash restore.sh
 
 
@@ -26,10 +31,11 @@ build:
 	$(DOCKER_BUILD)
 
 deploy:
-	$(DOCKER_UP)
+	$(DOCKER_UP) -d
 
 exec: deploy
 	$(DOCKER_EXEC) $(SERVICES) bash
+
 
 clean:
 	@find ./ -name '*.pyc' -exec rm -f {} \;
@@ -39,5 +45,3 @@ clean:
 	rm -rf build
 	rm -rf dist
 	rm -rf *.egg-info
-
-# docker-compose -f docker/docker-compose.yml --env-file .env exec  denguedb_demo bash

@@ -4,6 +4,11 @@
 ## restore.sh
 #############
 
+# Create roles
+./_prepare_server.sh
+
+# Download datafiles from Dataverse
+./_download_db.sh
 
 # Create and restore database
 ./docker/postgres_setup/01-create_dengue_db.sh
