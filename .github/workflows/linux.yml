@@ -36,8 +36,12 @@ jobs:
         docker-compose --version
         docker --version
 
+    - name: Download data from Dataverse
+      run: |
+        pwd
+        make download_demodb
+
     - name: Build and deploy data to infodengue
       run: |
-        make download_demodb
         make build
         make deploy
