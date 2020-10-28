@@ -1,0 +1,11 @@
+version: "3.4"
+services:
+    demo_db:
+      build:
+        context: ".."
+        dockerfile: "docker/Dockerfile"
+      hostname: demo_db
+      ports:
+        - "25432:25432"
+      volumes:
+        - ../:/Data

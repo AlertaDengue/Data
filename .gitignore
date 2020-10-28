@@ -1,0 +1,15 @@
+*.log
+*.pot
+*.pyc
+.idea/*
+*.sw[po]
+*.egg-info
+
+pip-selfcheck.json
+chunked_uploads
+authorized_keys
+settings.ini
+.env
+
+.vscode
+

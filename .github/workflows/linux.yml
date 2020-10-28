@@ -1,0 +1,46 @@
+ # This workflow will install Postgresql dependencies and run the database demo.
+
+
+name: CI
+
+on:
+  push:
+    branches: [ master]
+  pull_request:
+    branches: [ master]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+
+    env:
+      COMPOSE_FILE: docker/docker-compose.yml
+      PYTHON_VERSION: ${{ matrix.python-version }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Latest Docker
+      run: |
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu  $(lsb_release -cs)  stable"
+        sudo apt-get update
+        sudo apt-get install docker-ce
+
+    - name: Check docker and docker-compose versions
+      run: |
+        docker-compose --version
+        docker --version
+
+    - name: Download data from Dataverse
+      run: |
+        make download_demodb
+
+    - name: Build and deploy
+      run: |
+        make build
+        make deploy

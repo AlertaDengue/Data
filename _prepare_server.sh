@@ -1,8 +1,10 @@
+#!/bin/bash
 ####################
 ## _prepare_server.sh
 #####################
-#!/bin/bash
 
+
+# Create roles
 createuser -s -e administrador
 createuser -s -e dengueadmin
 createuser -s -e Dengue
