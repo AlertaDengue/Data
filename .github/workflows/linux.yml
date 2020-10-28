@@ -38,10 +38,9 @@ jobs:
 
     - name: Download data from Dataverse
       run: |
-        pwd
         make download_demodb
 
-    - name: Build and deploy data to infodengue
+    - name: Build and deploy
       run: |
         make build
         make deploy
