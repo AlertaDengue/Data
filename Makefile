@@ -25,7 +25,6 @@ download_demodb:
 create_demodb:
 	bash restore.sh
 
-
 # Configure database in the container
 build:
 	$(DOCKER_BUILD)
