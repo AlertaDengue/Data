@@ -13,3 +13,4 @@ settings.ini
 
 .vscode
 
+*.sql.gz
